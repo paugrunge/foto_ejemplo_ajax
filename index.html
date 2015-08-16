@@ -1,0 +1,93 @@
+
+<html>
+	<head>
+        <meta charset="UTF-8">
+		<title>AJAX</title>
+         <!-- bootstrap CSS -->
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		 <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+         <!-- bootstrap -->
+         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript">
+        
+            window.onload = function(){
+                // Escuchador de evento change del input file
+                document.getElementById("fichero").addEventListener('change', cargar, false);
+            };
+            
+	     function cargar()
+	    {
+	    var files = $("#fichero").get(0).files; // $("#fichero") slector por id de jquery  
+        var envio = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            envio.append("fichero0", files[i]);
+        }
+	      var promise = $.ajax
+	                ({
+	                type: "POST",
+	                url: "nexoAjax.php",
+	                contentType: false,
+            		processData: false,
+	                data: envio,
+	                cache: false,
+	                dataType: "text"
+	              });// fin del ajax
+	                
+	       // la funcion Ajax me devuelve una promesa de javascript, algo que va a hacerse. Cuando el servidor responde y si la respuesta del servidor es exitosa ingresa al done y ejecuta la función que se le pasa
+	       promise.done(function (dato){ 
+                            console.log(dato);
+                            var strIndex = dato.indexOf('Error');
+                            if(strIndex == -1) {
+                                //string no encontrado
+                                $('#img').attr("src", "FotosTemp/" + files[0].name);
+                                 $('#error').html("");
+                            } else {
+                                //string encontrado
+                                $('#error').html(dato);
+                                $('#img').attr("src", "");
+                                $('#fichero').val("");
+                            }
+	                           
+	       });
+
+	    }
+   		 </script>
+
+	</head>
+	<body>
+        <div class="jumbotron">
+            <div class="container">
+                <h1>Cargar foto con Ajax</h1>
+                <h3>No se recarga la página para cargar la foto. Se guarda una imagen en el server en carpeta temporal cada vez que el usuario previsualiza. Luego en
+                post se guarda definitivamente en otra carpeta bajo el nombre de usuario.</h3>
+                </br>
+                <h2 class="label label-default">Registrate</h2>
+                </br></br>
+                <form method="post" action="gestion.php" enctype="multipart/form-data">
+                <!-- Primera validación de el cliente con atributo required de html5-->
+                <div class="form-group">
+                <label for="exampleInputEmail1">Email</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email" name="email" required="required">
+               </div>
+               <div class="form-group">
+                <label for="exampleInputPassword1">Password</label>
+                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password"  name="password" required="required">
+                </div>
+                <label>Archivo</label>
+                </br>
+                <input type="file" name="fichero" id="fichero" required="required" accept="image/*"/>
+                </br>
+                </br>
+                <label>Preview</label>
+                </br>
+                <div id="error"></div>
+                <img class="img-thumbnail" name = "imagen" id = "img" src="" alt="Imagen aqui" width="280" height="250">
+                </br>
+                <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+            </div>
+        </div>
+	</body>
+</html>
