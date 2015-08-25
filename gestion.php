@@ -20,6 +20,8 @@
 
     <?php
     
+    session_start();
+    
     $btnError =  "<input type='button' class='btn btn-primary' onclick= 'volver()' value='Volver a Sign in'></input>";
     
     if(isset($_POST['email']) && $_POST['password'] && isset($_FILES['fichero']))
